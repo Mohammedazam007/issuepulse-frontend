@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import {
   LayoutDashboard, Plus, FileText, CheckCircle2, TrendingUp,
-  Users, BarChart3, LogOut, Menu, X, Zap, Shield
+  Users, BarChart3, LogOut, Menu, X, Zap, Shield,UserCircle
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -15,17 +15,20 @@ export default function Sidebar() {
   const handleLogout = () => { logout(); navigate('/login') }
 
   const studentLinks = [
-    { to: '/dashboard',       label: 'Dashboard',      icon: LayoutDashboard },
-    { to: '/raise-complaint', label: 'Raise Complaint', icon: Plus           },
-    { to: '/my-complaints',   label: 'My Complaints',   icon: FileText       },
-    { to: '/resolved-issues', label: 'Resolved Issues', icon: CheckCircle2   },
-    { to: '/trending',        label: 'Trending',        icon: TrendingUp     },
-  ]
-  const adminLinks = [
-    { to: '/admin/dashboard',  label: 'Dashboard',   icon: LayoutDashboard },
-    { to: '/admin/complaints', label: 'Complaints',  icon: Users           },
-    { to: '/admin/analytics',  label: 'Analytics',   icon: BarChart3       },
-  ]
+  { to: '/dashboard',       label: 'Dashboard',      icon: LayoutDashboard },
+  { to: '/raise-complaint', label: 'Raise Complaint', icon: Plus           },
+  { to: '/my-complaints',   label: 'My Complaints',   icon: FileText       },
+  { to: '/resolved-issues', label: 'Resolved Issues', icon: CheckCircle2   },
+  { to: '/trending',        label: 'Trending',        icon: TrendingUp     },
+  { to: '/profile',         label: 'Profile',         icon: UserCircle     }, // ← add this
+]
+
+const adminLinks = [
+  { to: '/admin/dashboard',  label: 'Dashboard',   icon: LayoutDashboard },
+  { to: '/admin/complaints', label: 'Complaints',  icon: Users           },
+  { to: '/admin/analytics',  label: 'Analytics',   icon: BarChart3       },
+  { to: '/admin/profile',    label: 'Profile',     icon: UserCircle      }, // ← add this
+]
   const links = isAdmin() ? adminLinks : studentLinks
   const isActive = (path) => location.pathname === path
 

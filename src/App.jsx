@@ -13,6 +13,9 @@ import RaiseComplaint   from './pages/student/RaiseComplaint'
 import MyComplaints     from './pages/student/MyComplaints'
 import ResolvedIssues   from './pages/student/ResolvedIssues'
 import TrendingIssues   from './pages/student/TrendingIssues'
+import Profile from './pages/student/Profile'
+
+
 
 // Admin pages
 import AdminDashboard   from './pages/admin/AdminDashboard'
@@ -31,6 +34,9 @@ export default function App() {
         <Route path="/resolved-issues" element={<ResolvedIssues/>}/>
 
         {/* Student (requires STUDENT role) */}
+        
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/admin/profile" element={<Profile />}/>
         <Route path="/dashboard" element={
           <ProtectedRoute role="STUDENT"><StudentDashboard/></ProtectedRoute>}/>
         <Route path="/raise-complaint" element={

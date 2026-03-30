@@ -49,4 +49,12 @@ export const adminAPI = {
   analytics:        ()             => API.get('/admin/analytics'),
 }
 
+// ── User / Profile ────────────────────────────────────────────────────────────
+export const userAPI = {
+  getProfile:     ()     => API.get('/user/profile'),
+  changePassword: (data) => API.put('/user/change-password', data),
+}
+
+
+
 export default API

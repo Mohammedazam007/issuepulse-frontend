@@ -5,17 +5,92 @@ import Layout from '../../components/layout/Layout'
 import { Upload, X, CheckCircle2, Camera, Lightbulb, Tag } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-const SUGGESTED = ['WiFi','Water Supply','Electricity','Cleanliness','Infrastructure','Canteen','Parking','Other']
+const CATEGORY_GROUPS = [
+  {
+    parent: 'Connectivity',
+    icon: '🖥️',
+    sub: ['WiFi', 'Projector', 'Lab Equipment'],
+  },
+  {
+    parent: 'Infrastructure',
+    icon: '🏗️',
+    sub: ['Electricity', 'Water Supply', 'Cleanliness', 'Benches', 'Washroom'],
+  },
+  {
+    parent: 'Academics',
+    icon: '🏫',
+    sub: ['Classroom', 'Projector', 'Lab Equipment'],
+  },
+  {
+    parent: 'Canteen',
+    icon: '🍽️',
+    sub: [],
+  },
+  {
+    parent: 'Transport',
+    icon: '🚌',
+    sub: [],
+  },
+  {
+    parent: 'Library',
+    icon: '📚',
+    sub: [],
+  },
+  {
+    parent: 'Sports & Medical',
+    icon: '⚕️',
+    sub: ['Sports', 'Medical'],
+  },
+  {
+    parent: 'Security',
+    icon: '🔒',
+    sub: [],
+  },
+  {
+    parent: 'Other',
+    icon: '📝',
+    sub: [],
+  },
+]
 
 export default function RaiseComplaint() {
   const navigate = useNavigate()
-  const [form, setForm]       = useState({ title:'', description:'', category:'', location:'' })
-  const [image, setImage]     = useState(null)
-  const [preview, setPreview] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+  const [form, setForm]             = useState({ title: '', description: '', category: '', location: '' })
+  const [image, setImage]           = useState(null)
+  const [preview, setPreview]       = useState(null)
+  const [loading, setLoading]       = useState(false)
+  const [success, setSuccess]       = useState(false)
+  const [selectedParent, setSelectedParent] = useState(null)
+  const [otherText, setOtherText]   = useState('')
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
+
+  const handleParentSelect = (group) => {
+    if (selectedParent === group.parent) {
+      // deselect
+      setSelectedParent(null)
+      setForm(f => ({ ...f, category: '' }))
+      setOtherText('')
+      return
+    }
+    setSelectedParent(group.parent)
+    setOtherText('')
+    // if no sub-tags (and not Other), set category to parent directly
+    if (group.sub.length === 0 && group.parent !== 'Other') {
+      setForm(f => ({ ...f, category: group.parent }))
+    } else {
+      setForm(f => ({ ...f, category: '' }))
+    }
+  }
+
+  const handleSubSelect = (sub) => {
+    setForm(f => ({ ...f, category: f.category === sub ? '' : sub }))
+  }
+
+  const handleOtherText = (e) => {
+    setOtherText(e.target.value)
+    setForm(f => ({ ...f, category: e.target.value }))
+  }
 
   const handleImage = e => {
     const file = e.target.files[0]
@@ -24,6 +99,13 @@ export default function RaiseComplaint() {
     setImage(file); setPreview(URL.createObjectURL(file))
   }
   const removeImage = () => { setImage(null); setPreview(null) }
+
+  const resetForm = () => {
+    setForm({ title: '', description: '', category: '', location: '' })
+    setSelectedParent(null)
+    setOtherText('')
+    removeImage()
+  }
 
   const handleSubmit = async e => {
     e.preventDefault(); setLoading(true)
@@ -54,13 +136,14 @@ export default function RaiseComplaint() {
           You'll see updates in <strong className="text-slate-700">My Complaints</strong>.
         </p>
         <div className="flex gap-3 justify-center">
-          <button onClick={() => { setSuccess(false); setForm({title:'',description:'',category:'',location:''}); removeImage() }}
-            className="btn-secondary">Raise Another</button>
+          <button onClick={() => { setSuccess(false); resetForm() }} className="btn-secondary">Raise Another</button>
           <button onClick={() => navigate('/my-complaints')} className="btn-primary">View My Complaints</button>
         </div>
       </div>
     </Layout>
   )
+
+  const activeGroup = CATEGORY_GROUPS.find(g => g.parent === selectedParent)
 
   return (
     <Layout>
@@ -70,7 +153,13 @@ export default function RaiseComplaint() {
           <p className="page-subtitle">All fields are optional. Describe as much or as little as you like.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') e.preventDefault()
+          }}
+          className="space-y-4">
+
           {/* Title */}
           <div className="card">
             <label className="input-label">Complaint Title</label>
@@ -84,25 +173,79 @@ export default function RaiseComplaint() {
           <div className="card space-y-4">
             <div>
               <label className="input-label flex items-center gap-1.5">
-                <Tag size={11} /> Category <span className="text-slate-400 normal-case tracking-normal font-normal">(free text)</span>
+                <Tag size={11} /> Category
               </label>
-              <input name="category"
-                placeholder="Type any category…"
-                value={form.category} onChange={handleChange}
-                className="input-field mb-2.5" />
-              <div className="flex flex-wrap gap-1.5">
-                {SUGGESTED.map(s => (
-                  <button key={s} type="button"
-                    onClick={() => setForm(f => ({ ...f, category: s }))}
-                    className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all ${
-                      form.category === s
+
+              {/* Parent group chips */}
+              <div className="flex flex-wrap gap-2 mb-3">
+                {CATEGORY_GROUPS.map(group => (
+                  <button key={group.parent} type="button"
+                    onClick={() => handleParentSelect(group)}
+                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border font-medium transition-all ${
+                      selectedParent === group.parent
                         ? 'bg-primary text-white border-primary shadow-glow-sm'
-                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-primary/40 hover:text-primary'}`}>
-                    {s}
+                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:border-primary/40 hover:text-primary'
+                    }`}>
+                    <span>{group.icon}</span>
+                    {group.parent}
                   </button>
                 ))}
               </div>
+
+              {/* Sub-tags — shown when a parent with sub-tags is selected */}
+              {activeGroup && activeGroup.sub.length > 0 && (
+                <div className="pl-3 border-l-2 border-primary/20 mb-2">
+                  <p className="text-xs text-slate-400 mb-2">Pick a specific issue under <span className="font-medium text-slate-500">{activeGroup.parent}</span>:</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {activeGroup.sub.map(sub => (
+                      <button key={sub} type="button"
+                        onClick={() => handleSubSelect(sub)}
+                        className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all ${
+                          form.category === sub
+                            ? 'bg-primary text-white border-primary shadow-glow-sm'
+                            : 'bg-white text-slate-600 border-slate-200 hover:border-primary/40 hover:text-primary'
+                        }`}>
+                        {sub}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Other — free text input */}
+              {selectedParent === 'Other' && (
+                <div className="pl-3 border-l-2 border-primary/20">
+                  <p className="text-xs text-slate-400 mb-2">Describe your category:</p>
+                  <input
+                    type="text"
+                    value={otherText}
+                    onChange={handleOtherText}
+                    placeholder="e.g. Stray animals on campus…"
+                    className="input-field"
+                    autoFocus
+                  />
+                </div>
+              )}
+
+              {/* Selected category pill */}
+              {form.category && (
+                <div className="mt-2.5 flex items-center gap-2">
+                  <span className="text-xs text-slate-400">Selected:</span>
+                  <span className="text-xs px-2.5 py-1 bg-primary/10 text-primary rounded-full font-medium border border-primary/20">
+                    {selectedParent !== 'Other' && selectedParent !== form.category
+                      ? `${selectedParent} › ${form.category}`
+                      : form.category}
+                  </span>
+                  <button type="button"
+                    onClick={() => { setForm(f => ({ ...f, category: '' })); setSelectedParent(null); setOtherText('') }}
+                    className="text-slate-300 hover:text-red-400 transition-colors">
+                    <X size={13} />
+                  </button>
+                </div>
+              )}
             </div>
+
+            {/* Location */}
             <div>
               <label className="input-label">Location</label>
               <input name="location"
