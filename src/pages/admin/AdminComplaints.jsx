@@ -75,9 +75,10 @@ function ResolutionModal({ complaint, onClose, onDone }) {
       {lightboxUrl && <ImageLightbox url={lightboxUrl} onClose={() => setLightboxUrl(null)} />}
 
       {/* ✅ Fixed: items-start + overflow-y-auto + py-6 so modal scrolls */}
-      <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-4 py-6 overflow-y-auto animate-fade-in">
-        <div className="bg-white rounded-2xl shadow-modal w-full max-w-lg p-6 animate-fade-up">
-          <div className="flex items-center justify-between mb-5">
+// ✅ Replace the outer two divs with this:
+<div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 animate-fade-in">
+  <div className="flex min-h-full items-start justify-center p-4 sm:p-6">
+    <div className="bg-white rounded-2xl shadow-modal w-full max-w-lg p-6 animate-fade-up my-6">
             <div>
               <h2 className="font-bold text-slate-900" style={{ fontFamily: 'Bricolage Grotesque,sans-serif' }}>
                 Complaint #{complaint.id}
