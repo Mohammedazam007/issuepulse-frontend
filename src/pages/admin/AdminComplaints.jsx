@@ -19,7 +19,7 @@ function ImageLightbox({ url, onClose }) {
         className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all">
         <X size={18} />
       </button>
-      
+      <a
         href={url}
         target="_blank"
         rel="noreferrer"
