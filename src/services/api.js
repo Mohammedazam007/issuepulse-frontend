@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const API = axios.create({
-  baseURL: "https://issuepulse-backend.onrender.com"
+  baseURL: "https://issuepulse-backend.onrender.com/api"  // 👈 only change
 });
 
 // Attach JWT token to every request automatically
@@ -53,7 +53,5 @@ export const userAPI = {
   getProfile:     ()     => API.get('/user/profile'),
   changePassword: (data) => API.put('/user/change-password', data),
 }
-
-
 
 export default API
