@@ -6,23 +6,20 @@ import StatusBadge from '../../components/common/StatusBadge'
 import { STATUSES, formatDate, categoryColor, statusBorderColor } from '../../utils/helpers'
 import { Search, SlidersHorizontal, FileText, X, MapPin, Calendar, Tag, MessageSquare, ZoomIn, ExternalLink } from 'lucide-react'
 
+const BASE_URL = "https://issuepulse-backend.onrender.com"
+
 // ── Image Lightbox ─────────────────────────────────────────────────────────────
 function ImageLightbox({ url, onClose }) {
   return (
-    <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 animate-fade-in"
-      onClick={onClose}>
-      <button onClick={onClose}
-        className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 animate-fade-in" onClick={onClose}>
+      <button onClick={onClose} className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all">
         <X size={18} />
       </button>
-      <a href={url} target="_blank" rel="noreferrer"
-        onClick={e => e.stopPropagation()}
+      <a href={url} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}
         className="absolute top-4 right-16 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all">
         <ExternalLink size={16} />
       </a>
-      <img src={url} alt="Full size"
-        onClick={e => e.stopPropagation()}
+      <img src={url} alt="Full size" onClick={e => e.stopPropagation()}
         className="max-w-[92vw] max-h-[88vh] object-contain rounded-xl shadow-2xl" />
     </div>
   )
@@ -37,111 +34,115 @@ function ComplaintDetailModal({ complaint: c, onClose }) {
     <>
       {lightboxUrl && <ImageLightbox url={lightboxUrl} onClose={() => setLightboxUrl(null)} />}
 
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 animate-fade-in"
-        onClick={onClose}>
-        <div
-          className={`bg-white rounded-2xl shadow-modal w-full max-w-lg animate-fade-up max-h-[90vh] overflow-y-auto border-t-4 ${borderCls}`}
-          onClick={e => e.stopPropagation()}>
+      {/* BACKDROP */}
+      <div className="fixed inset-0 z-50 bg-black/50 animate-fade-in" onClick={onClose} />
 
-          {/* Header */}
-          <div className="flex items-center justify-between p-5 pb-0">
-            <div>
-              <p className="text-xs text-slate-400 font-mono mb-0.5">Complaint #{c.id}</p>
-              <h2 className="font-bold text-slate-900 text-base leading-snug" style={{ fontFamily: 'Bricolage Grotesque,sans-serif' }}>
-                {c.title || <span className="italic text-slate-400 font-normal">Untitled complaint</span>}
-              </h2>
-            </div>
-            <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-              <StatusBadge status={c.status} />
-              <button onClick={onClose}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
-                <X size={16} />
-              </button>
-            </div>
-          </div>
+      {/* MODAL */}
+      <div className="fixed inset-0 z-50 overflow-y-auto">
+        <div className="flex min-h-full items-start justify-center p-4 pt-10">
+          <div className={`bg-white rounded-2xl shadow-modal w-full max-w-lg animate-fade-up border-t-4 ${borderCls}`}
+            onClick={e => e.stopPropagation()}>
 
-          <div className="p-5 space-y-4">
-            {/* Meta */}
-            <div className="flex flex-wrap gap-2">
-              {c.category && (
-                <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg border"
-                  style={{
-                    background: categoryColor(c.category) + '12',
-                    borderColor: categoryColor(c.category) + '30',
-                    color: categoryColor(c.category),
-                  }}>
-                  <Tag size={10} /> {c.category}
-                </span>
-              )}
-              {c.location && (
-                <span className="inline-flex items-center gap-1 text-xs text-slate-500 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg">
-                  <MapPin size={10} className="text-slate-400" /> {c.location}
-                </span>
-              )}
-              <span className="inline-flex items-center gap-1 text-xs text-slate-400 px-2.5 py-1">
-                <Calendar size={10} /> {formatDate(c.createdAt)}
-              </span>
-            </div>
-
-            {/* Description */}
-            {c.description && (
-              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Description</p>
-                <p className="text-sm text-slate-700 leading-relaxed">{c.description}</p>
-              </div>
-            )}
-
-            {/* Issue image — clickable */}
-            {c.imageUrl && (
+            {/* Header */}
+            <div className="flex items-center justify-between p-5 pb-0">
               <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Photo Evidence</p>
-                <div className="relative group cursor-zoom-in rounded-xl overflow-hidden"
-                  onClick={() => setLightboxUrl(c.imageUrl)}>
-                  <img src={c.imageUrl} alt="Issue"
-                    className="w-full h-52 object-cover transition-all group-hover:brightness-90" />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-                    <div className="bg-black/60 rounded-full px-3 py-1.5 flex items-center gap-1.5 text-white text-xs font-medium">
-                      <ZoomIn size={13} /> Click to view full image
-                    </div>
-                  </div>
-                </div>
+                <p className="text-xs text-slate-400 font-mono mb-0.5">Complaint #{c.id}</p>
+                <h2 className="font-bold text-slate-900 text-base leading-snug" style={{ fontFamily: 'Bricolage Grotesque,sans-serif' }}>
+                  {c.title || <span className="italic text-slate-400 font-normal">Untitled complaint</span>}
+                </h2>
               </div>
-            )}
+              <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                <StatusBadge status={c.status} />
+                <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all">
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
 
-            {/* Admin response */}
-            {c.adminMessage ? (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
-                <div className="flex items-center gap-1.5 mb-2">
-                  <MessageSquare size={13} className="text-emerald-600" />
-                  <p className="text-xs font-semibold text-emerald-700">Admin Response</p>
-                </div>
-                <p className="text-sm text-emerald-800 leading-relaxed">{c.adminMessage}</p>
-                {c.resolvedAt && (
-                  <p className="text-xs text-emerald-500 mt-1.5">{new Date(c.resolvedAt).toLocaleString()}</p>
+            <div className="p-5 space-y-4">
+              {/* Meta */}
+              <div className="flex flex-wrap gap-2">
+                {c.category && (
+                  <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg border"
+                    style={{
+                      background: categoryColor(c.category) + '12',
+                      borderColor: categoryColor(c.category) + '30',
+                      color: categoryColor(c.category),
+                    }}>
+                    <Tag size={10} /> {c.category}
+                  </span>
                 )}
-                {/* Resolution image — clickable */}
-                {c.resolutionImageUrl && (
-                  <div className="relative group cursor-zoom-in rounded-lg overflow-hidden mt-3"
-                    onClick={() => setLightboxUrl(c.resolutionImageUrl)}>
-                    <img src={c.resolutionImageUrl} alt="Resolution"
-                      className="w-full h-36 object-cover border border-emerald-200 transition-all group-hover:brightness-90" />
+                {c.location && (
+                  <span className="inline-flex items-center gap-1 text-xs text-slate-500 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-lg">
+                    <MapPin size={10} className="text-slate-400" /> {c.location}
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-1 text-xs text-slate-400 px-2.5 py-1">
+                  <Calendar size={10} /> {formatDate(c.createdAt)}
+                </span>
+              </div>
+
+              {/* Description */}
+              {c.description && (
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Description</p>
+                  <p className="text-sm text-slate-700 leading-relaxed">{c.description}</p>
+                </div>
+              )}
+
+              {/* Issue image */}
+              {c.imageUrl && (
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Photo Evidence</p>
+                  <div className="relative group cursor-zoom-in rounded-xl overflow-hidden"
+                    onClick={() => setLightboxUrl(`${BASE_URL}${c.imageUrl}`)}>
+                    <img src={`${BASE_URL}${c.imageUrl}`} alt="Issue"
+                      className="w-full h-52 object-cover transition-all group-hover:brightness-90" />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
                       <div className="bg-black/60 rounded-full px-3 py-1.5 flex items-center gap-1.5 text-white text-xs font-medium">
                         <ZoomIn size={13} /> Click to view full image
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
-            ) : (
-              <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-center">
-                <p className="text-xs text-slate-400">No admin response yet. Check back within 2 business days.</p>
-              </div>
-            )}
-          </div>
+                </div>
+              )}
 
-          <div className="px-5 pb-5">
-            <button onClick={onClose} className="btn-secondary w-full">Close</button>
+              {/* Admin response */}
+              {c.adminMessage ? (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <MessageSquare size={13} className="text-emerald-600" />
+                    <p className="text-xs font-semibold text-emerald-700">Admin Response</p>
+                  </div>
+                  <p className="text-sm text-emerald-800 leading-relaxed">{c.adminMessage}</p>
+                  {c.resolvedAt && (
+                    <p className="text-xs text-emerald-500 mt-1.5">{new Date(c.resolvedAt).toLocaleString()}</p>
+                  )}
+                  {/* Resolution image */}
+                  {c.resolutionImageUrl && (
+                    <div className="relative group cursor-zoom-in rounded-lg overflow-hidden mt-3"
+                      onClick={() => setLightboxUrl(`${BASE_URL}${c.resolutionImageUrl}`)}>
+                      <img src={`${BASE_URL}${c.resolutionImageUrl}`} alt="Resolution"
+                        className="w-full h-36 object-cover border border-emerald-200 transition-all group-hover:brightness-90" />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                        <div className="bg-black/60 rounded-full px-3 py-1.5 flex items-center gap-1.5 text-white text-xs font-medium">
+                          <ZoomIn size={13} /> Click to view full image
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-center">
+                  <p className="text-xs text-slate-400">No admin response yet. Check back within 2 business days.</p>
+                </div>
+              )}
+            </div>
+
+            <div className="px-5 pb-5">
+              <button onClick={onClose} className="btn-secondary w-full">Close</button>
+            </div>
+
           </div>
         </div>
       </div>
@@ -155,7 +156,7 @@ export default function MyComplaints() {
   const [loading, setLoading]       = useState(true)
   const [filter, setFilter]         = useState('ALL')
   const [search, setSearch]         = useState('')
-  const [selected, setSelected]     = useState(null)   // ← detail modal
+  const [selected, setSelected]     = useState(null)
 
   useEffect(() => {
     complaintAPI.myList().then(r => setComplaints(r.data)).finally(() => setLoading(false))
@@ -232,11 +233,7 @@ export default function MyComplaints() {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {visible.map(c => (
-            <ComplaintCard
-              key={c.id}
-              complaint={c}
-              onClick={() => setSelected(c)}   // ← this was missing!
-            />
+            <ComplaintCard key={c.id} complaint={c} onClick={() => setSelected(c)} />
           ))}
         </div>
       )}
