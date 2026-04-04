@@ -74,8 +74,8 @@ function ResolutionModal({ complaint, onClose, onDone }) {
     <>
       {lightboxUrl && <ImageLightbox url={lightboxUrl} onClose={() => setLightboxUrl(null)} />}
 
-      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 animate-fade-in">
-  <div className="flex min-h-screen items-center justify-center p-4 sm:p-6">
+<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-fade-in p-4">
+  <div className="bg-white rounded-2xl shadow-modal w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fade-up">
           <div className="bg-white rounded-2xl shadow-modal w-full max-w-lg p-6 animate-fade-up my-6">
 
             {/* Header */}
