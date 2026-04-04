@@ -1,9 +1,8 @@
 import axios from 'axios'
 
 const API = axios.create({
-  baseURL: '/api',
-  timeout: 15000,
-})
+  baseURL: "https://issuepulse-backend.onrender.com"
+});
 
 // Attach JWT token to every request automatically
 API.interceptors.request.use(config => {
