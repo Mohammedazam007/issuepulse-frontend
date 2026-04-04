@@ -6,6 +6,8 @@ import { formatDate, STATUSES, uniqueCategories } from '../../utils/helpers'
 import { X, AlertTriangle, Upload, Send, Search, Filter, ZoomIn, ExternalLink } from 'lucide-react'
 import toast from 'react-hot-toast'
 
+const BASE_URL = "https://issuepulse-backend.onrender.com"  // ✅ Added
+
 // ── Image Lightbox ────────────────────────────────────────────────────────────
 function ImageLightbox({ url, onClose }) {
   return (
@@ -17,7 +19,7 @@ function ImageLightbox({ url, onClose }) {
         className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all">
         <X size={18} />
       </button>
-      <a
+      
         href={url}
         target="_blank"
         rel="noreferrer"
@@ -72,8 +74,9 @@ function ResolutionModal({ complaint, onClose, onDone }) {
     <>
       {lightboxUrl && <ImageLightbox url={lightboxUrl} onClose={() => setLightboxUrl(null)} />}
 
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 animate-fade-in">
-        <div className="bg-white rounded-2xl shadow-modal w-full max-w-lg p-6 animate-fade-up max-h-[90vh] overflow-y-auto">
+      {/* ✅ Fixed: items-start + overflow-y-auto + py-6 so modal scrolls */}
+      <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-4 py-6 overflow-y-auto animate-fade-in">
+        <div className="bg-white rounded-2xl shadow-modal w-full max-w-lg p-6 animate-fade-up">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h2 className="font-bold text-slate-900" style={{ fontFamily: 'Bricolage Grotesque,sans-serif' }}>
@@ -102,11 +105,12 @@ function ResolutionModal({ complaint, onClose, onDone }) {
               </div>
             </div>
 
-            {/* Issue photo — clickable */}
+            {/* ✅ Fixed: prepend BASE_URL to imageUrl */}
             {complaint.imageUrl && (
-              <div className="relative group cursor-zoom-in" onClick={() => setLightboxUrl(complaint.imageUrl)}>
+              <div className="relative group cursor-zoom-in"
+                onClick={() => setLightboxUrl(`${BASE_URL}/${complaint.imageUrl}`)}>
                 <img
-                  src={complaint.imageUrl}
+                  src={`${BASE_URL}/${complaint.imageUrl}`}
                   alt="Issue"
                   className="w-full h-44 object-cover rounded-xl border border-slate-200 transition-all group-hover:brightness-90"
                 />
