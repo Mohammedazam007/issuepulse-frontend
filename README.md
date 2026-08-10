@@ -122,6 +122,7 @@ IssuePulse uses **JWT (JSON Web Token)** authentication.
 
 - Email Notifications
 - AI-based Complaint Classification
+- Chatbot for Queries
 - Mobile Application
 - Real-time Notifications
 - Complaint Heatmaps
